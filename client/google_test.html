@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Google Sign-In Example</title>
+    <meta name="google-signin-scope" content="profile email">
+    <meta name="google-signin-client_id" content="890858359628-u8fno1i9piujj86ssph2uguopbjaa388.apps.googleusercontent.com">
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+</head>
+<body>
+    <div class="g-signin2" data-onsuccess="onSignIn"></div>
+    
+    <script>
+        function onSignIn(googleUser) {
+            // The ID token is used to identify the user
+            var response = googleUser.getAuthResponse();
+            console.log(response);
+
+            // You can send this ID token to your server for verification
+            // and to identify the user there.
+        }
+    </script>
+</body>
+</html>
