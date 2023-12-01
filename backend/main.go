@@ -92,19 +92,19 @@ func route_session_create(ctx *gin.Context) {
 		return
 	}
 
-	publicKey, err := getGoogleCerts()
+	// publicKey, err := getGoogleCerts()
 
-	if err != nil {
-		ctx.IndentedJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
-		return
-	}
+	// if err != nil {
+	// 	ctx.IndentedJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+	// 	return
+	// }
 
 	// pass your custom claims to the parser function
 	token, err := jwt.ParseWithClaims(args.JWT, &MyClaims{}, func(token *jwt.Token) (interface{}, error) {
-		if _, ok := token.Method.(*jwt.SigningMethodRSA); !ok {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, errors.New("unexpected signing method")
 		}
-		return []byte(publicKey), nil
+		return []byte("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"), nil
 	})
 
 	if err != nil {

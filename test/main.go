@@ -1,116 +1,60 @@
+// https://github.com/MicahParks/keyfunc/blob/master/examples/json/main.go
+
+// I replaced the keys with the current ones from "https://www.googleapis.com/oauth2/v3/certs"
+// and the jwt from my account
+
 package main
 
 import (
 	"encoding/json"
-	"fmt"
-	"io"
 	"log"
-	"net/http"
 
-	"github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt/v5"
+
+	"github.com/MicahParks/keyfunc/v2"
 )
 
-const googleTokenInfoURL = "https://www.googleapis.com/oauth2/v3/certs"
-
 func main() {
-	// Replace YOUR_GOOGLE_TOKEN with the actual Google JWT token you want to decode.
-	tokenString := "eyJhbGciOiJSUzI1NiIsImtpZCI6ImU0YWRmYjQzNmI5ZTE5N2UyZTExMDZhZjJjODQyMjg0ZTQ5ODZhZmYiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhenAiOiI2MTAwMTc1MTA2ODMtc2JzYzRiNTViOWxkbnJvamFkZTgwY3IzdmJmMnVra3YuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiI2MTAwMTc1MTA2ODMtc2JzYzRiNTViOWxkbnJvamFkZTgwY3IzdmJmMnVra3YuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMTMyMjkzNjQxMjYxNjM1MTg5NTQiLCJlbWFpbCI6ImlhaW53aW50ZXIxQGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJuYmYiOjE3MDE0MDA5MzYsIm5hbWUiOiJJYWluIFdpbnRlciIsInBpY3R1cmUiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vYS9BQ2c4b2NJcE8wLW54RGNGQ1B5dDZmTGtsSnV5X0kwWk54bEZuWm1zS1BsbjI2dWh0bTg9czk2LWMiLCJnaXZlbl9uYW1lIjoiSWFpbiIsImZhbWlseV9uYW1lIjoiV2ludGVyIiwibG9jYWxlIjoiZW4iLCJpYXQiOjE3MDE0MDEyMzYsImV4cCI6MTcwMTQwNDgzNiwianRpIjoiNTg4MGM1NWU3MTZhOGJiOTAyNTMzNzQ5NjFhZjI3MDQ3MjY0ZmZhZSJ9.Zl8zzGabwyffKjc0XzFf5hbHW5MjJ7XWQAJtlLHa639U2jVqCYOfCgwzzgdePEtAgZMslCqePyC9uOYkyUmObKAeHXgd09G54JPnVKRX5IdHJym7Iqb4mvPE_QRA1XlmA1Pcg-0dqL9SeOLTPcpk5DWaqNyh2GWzW5gxqOlFfphhsLPxDog8Vd-9fIPyBhKlPTUtEy2Gai-CvegNVy5JFY7wo7Q58gEZfyXuUCbe7rYOJ6JHQi8Y5vkEQFyfbpsFs_7kXVUDbDkiL5RU0axDAc3onnRBNoQ_H0mHUJO01Lo6kcBeu09SUTCvrHSVlDGY9rO905eLNoiw-CcEQE7uxA"
-	// Decode the Google JWT token.
-	claims, err := decodeGoogleToken(tokenString)
+	// Get the JWKS as JSON.
+	jwksJSON := json.RawMessage(`{
+		"keys": [
+		  {
+			"e": "AQAB",
+			"n": "vZgPf9nruMYY71q5pgThDwmk6Z3DD7cwN-Z52__b4xHeY95wOeKpjSliaI8K1PpeBbm4NykHm6UmfB_pCw5P2owpHZ8JEF2FCeDFKcOtZOzolYVgKZY8Sunqxcr3Sm0n73jbGcPgqu5PpjnOR4WkZCnpmDEZ34KNQat_MYYNUZZE2RlbpppNHiLatdiLW-rWi9YCmpsE4EIdd-XKIyZpQZRKaAl-w72BboTD_Koq2CkAOZOab73Q_G5FVT0NrxEWqP6artVfg5Dc_VVPnvtsC9yMe8lNgU3c3a-mE-vzE9oxAjr0s8Ek0Ih_sv-CbWL8xHiI7MOygIPG_aQqvMhPaQ",
+			"kid": "0e72da1df501ca6f756bf103fd7c720294772506",
+			"alg": "RS256",
+			"use": "sig",
+			"kty": "RSA"
+		  },
+		  {
+			"kty": "RSA",
+			"alg": "RS256",
+			"e": "AQAB",
+			"kid": "e4adfb436b9e197e2e1106af2c842284e4986aff",
+			"n": "psply8S991RswM0JQJwv51fooFFvZUtYdL8avyKObshyzj7oJuJD8vkf5DKJJF1XOGi6Wv2D-U4b3htgrVXeOjAvaKTYtrQVUG_Txwjebdm2EvBJ4R6UaOULjavcSkb8VzW4l4AmP_yWoidkHq8n6vfHt9alDAONILi7jPDzRC7NvnHQ_x0hkRVh_OAmOJCpkgb0gx9-U8zSBSmowQmvw15AZ1I0buYZSSugY7jwNS2U716oujAiqtRkC7kg4gPouW_SxMleeo8PyRsHpYCfBME66m-P8Zr9Fh1Qgmqg4cWdy_6wUuNc1cbVY_7w1BpHZtZCNeQ56AHUgUFmo2LAQQ",
+			"use": "sig"
+		  }
+		]
+	  }`)
+
+	// Create the JWKS from the resource at the given URL.
+	jwks, err := keyfunc.NewJSON(jwksJSON)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Failed to create JWKS from JSON.\nError: %s", err.Error())
 	}
 
-	// Print the decoded claims.
-	fmt.Println("Decoded Claims:")
-	printClaims(claims)
-}
+	// Get a JWT to parse.
+	jwtB64 := "out your JWT here"
 
-func decodeGoogleToken(tokenString string) (jwt.MapClaims, error) {
-	// Fetch Google's public keys for token verification.
-	keys, err := fetchGooglePublicKeys()
+	// Parse the JWT.
+	token, err := jwt.Parse(jwtB64, jwks.Keyfunc)
 	if err != nil {
-		return nil, err
-	}
-
-	// Parse the token without verification to get the key ID.
-	token, _, err := new(jwt.Parser).ParseUnverified(tokenString, jwt.MapClaims{})
-	if err != nil {
-		return nil, err
-	}
-
-	// Find the appropriate key for verification.
-	keyID, ok := token.Header["kid"].(string)
-	if !ok {
-		return nil, fmt.Errorf("Key ID not found in token header")
-	}
-
-	key, exists := keys[keyID]
-	if !exists {
-		return nil, fmt.Errorf("Key not found for Key ID: %s", keyID)
-	}
-
-	// Parse and verify the token using the key.
-	parsedToken, err := jwt.Parse(tokenString, func(parsedToken *jwt.Token) (interface{}, error) {
-		return key, nil
-	})
-	if err != nil {
-		return nil, err
+		log.Fatalf("Failed to parse the JWT.\nError: %s", err.Error())
 	}
 
 	// Check if the token is valid.
-	if !parsedToken.Valid {
-		return nil, fmt.Errorf("Invalid token")
+	if !token.Valid {
+		log.Fatalf("The token is not valid.")
 	}
-
-	// Extract claims from the parsed token.
-	claims, ok := parsedToken.Claims.(jwt.MapClaims)
-	if !ok {
-		return nil, fmt.Errorf("Invalid claims format")
-	}
-
-	return claims, nil
-}
-
-func fetchGooglePublicKeys() (map[string]interface{}, error) {
-	// Fetch Google's public keys used for token verification.
-	resp, err := http.Get(googleTokenInfoURL)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("Failed to fetch Google public keys: %s", resp.Status)
-	}
-
-	// Read and parse the response body.
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	// Parse the JSON response.
-	var keys map[string]interface{}
-	err = json.Unmarshal(body, &keys)
-	if err != nil {
-		return nil, err
-	}
-
-	// Map the kid to the public key
-	keysMap := make(map[string]interface{})
-	for item := range keys["keys"].([]interface{}) {
-		var kid = keys["keys"].([]interface{})[item].(map[string]interface{})["kid"].(string) // Go may actually stink
-		var key = keys["keys"].([]interface{})[item].(map[string]interface{})["n"].(string)
-
-		keysMap[kid] = key
-	}
-
-	return keysMap, nil
-}
-
-func printClaims(claims jwt.MapClaims) {
-	for key, value := range claims {
-		fmt.Printf("%s: %v\n", key, value)
-	}
+	log.Println("The token is valid.")
 }
