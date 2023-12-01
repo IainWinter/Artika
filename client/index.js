@@ -5,7 +5,7 @@ const path = require('path');
 const app = express();
 
 app.use(helmet({
-    crossOriginOpenerPolicy: 'same-origin; include:same-origin-allow-popups',
+    crossOriginOpenerPolicy: 'http://localhost:3000',
     contentSecurityPolicy: {
         directives: {
             defaultSrc: ["'self'"],
