@@ -13,13 +13,13 @@ type SessionCreateRequestBody struct {
 func route_session_create(ctx *gin.Context) {
 	var args SessionCreateRequestBody
 
-	if err := ctx.BindJSON(&args); err != nil {
+	err := ctx.BindJSON(&args)
+	if err != nil {
 		ctx.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
 
 	user_info_all, err := decode_jwt(args.JWT)
-
 	if err != nil {
 		ctx.AbortWithStatus(http.StatusBadRequest)
 		return

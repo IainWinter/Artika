@@ -26,6 +26,7 @@ func _download_string(url string) (string, error) {
 }
 
 func decode_jwt(jwtb64 string) (jwt.MapClaims, error) {
+	// Should cache this in a file, only need to update it based on cache headers
 	json_string, err := _download_string("https://www.googleapis.com/oauth2/v3/certs")
 	if err != nil {
 		return nil, err
