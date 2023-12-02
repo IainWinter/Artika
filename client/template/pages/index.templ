@@ -1,0 +1,28 @@
+package pages
+
+templ Index() {
+
+	<html>
+		<head>
+			<title>Testing Google Signin</title>
+			<meta viewport="width=device-width, initial-scale=1.0"/>
+			<meta name="htmx-config" content='{"methodsThatUseUrlParams":[]}'/>
+		</head>
+		<body>
+			<script src="https://unpkg.com/htmx.org@1.9.9"></script>
+			<script src="js/extern/cookie.js"></script>
+
+			<script src="js/config.js"></script>
+			<script src="js/login.js"></script>
+
+			// <script>
+			// 	// To make the go functions simple and consistant
+			// 	// just send everything in the body
+			// 	htmx.config.methodsThatUseUrlParams = [];
+			// </script>
+
+			<div hx-get="/component/account" hx-trigger="load" hx-swap="innerHTML" hx-vals="js:{SessionID: getSessionId()}"></div>
+
+		</body>
+	</html>
+}
