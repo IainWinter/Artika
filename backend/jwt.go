@@ -1,58 +1,49 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
-	"os"
-	"time"
+
+	"github.com/MicahParks/keyfunc/v2"
+	"github.com/golang-jwt/jwt/v5"
 )
 
-func writeGoogleFile(file string, data []byte) error {
-	return os.WriteFile(file, data, 0644)
-}
-
-func fetchGoogleCerts() (string, error) {
-	response, err := http.Get("https://www.googleapis.com/oauth2/v3/certs")
+func _download_string(url string) (string, error) {
+	response, err := http.Get(url)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("Error making GET request:", err)
 	}
 	defer response.Body.Close()
 
-	if response.StatusCode != http.StatusOK {
-		return "", fmt.Errorf("Failed to fetch Google certificates, status code: %d", response.StatusCode)
-	}
-
-	jsonData, err := io.ReadAll(response.Body)
+	body, err := io.ReadAll(response.Body)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("Error reading response body:", err)
 	}
 
-	return string(jsonData), nil
+	return string(body), nil
 }
 
-func getGoogleCerts() (string, error) {
-	file := "certs/google_jwt_oauth.json"
-	fileInfo, err := os.Stat(file)
-
-	if os.IsNotExist(err) || time.Since(fileInfo.ModTime()) > 24*time.Hour {
-		jsonString, err := fetchGoogleCerts()
-		if err != nil {
-			return "", err
-		}
-
-		err = writeGoogleFile(file, []byte(jsonString))
-		if err != nil {
-			return "", err
-		}
-
-		return jsonString, nil
-	}
-
-	b, err := os.ReadFile(file)
+func decode_jwt(jwtb64 string) (jwt.MapClaims, error) {
+	json_string, err := _download_string("https://www.googleapis.com/oauth2/v3/certs")
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	return string(b), nil
+	json := json.RawMessage(json_string)
+
+	jwks, err := keyfunc.NewJSON(json)
+	if err != nil {
+		return nil, err
+	}
+
+	token, err := jwt.Parse(jwtb64, jwks.Keyfunc)
+	if err != nil {
+		return nil, err
+	}
+
+	claims := token.Claims.(jwt.MapClaims)
+
+	return claims, nil
 }
