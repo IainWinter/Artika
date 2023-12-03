@@ -3,6 +3,7 @@ package main
 import (
 	"artika/api/user"
 	"artika/client/template/pages"
+	"artika/client/template/props"
 	"context"
 	"net/http"
 
@@ -22,15 +23,9 @@ func routeSessionCreate(ctx *gin.Context) {
 		return
 	}
 
-	userInfo, err := user.DecodeJWT(args.JWT)
+	userSession, err := user.RegisterJWT(args.JWT)
 	if err != nil {
-		ctx.AbortWithStatus(http.StatusBadRequest)
-		return
-	}
-
-	userSession, err := user.CreateSession(userInfo)
-	if err != nil {
-		ctx.AbortWithStatus(http.StatusBadRequest)
+		ctx.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
 
@@ -54,7 +49,7 @@ func routeSessionDelete(ctx *gin.Context) {
 
 	err = user.DeleteSession(args.SessionID)
 	if err != nil {
-		ctx.AbortWithStatus(http.StatusBadRequest)
+		ctx.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
 
@@ -62,30 +57,14 @@ func routeSessionDelete(ctx *gin.Context) {
 }
 
 func routeIndex(ctx *gin.Context) {
-	var indexProps = pages.IndexComponentProps{}
+	var pageProps pages.IndexProps
 
 	sessionIDCookie, err := ctx.Request.Cookie("SessionID")
 	if err != http.ErrNoCookie {
-		isSessionValid, err := user.IsSessionValid(sessionIDCookie.Value)
-		if err != nil {
-			ctx.AbortWithStatus(http.StatusBadRequest)
-			return
-		}
-
-		indexProps.IsSessionValid = isSessionValid
-
-		if isSessionValid {
-			userInfo, err := user.GetUserFromSessionID(sessionIDCookie.Value)
-			if err != nil {
-				ctx.AbortWithStatus(http.StatusBadRequest)
-				return
-			}
-
-			indexProps.UserInfo = userInfo
-		}
+		pageProps, err = props.GetIndexPagePropsFromSessionID(sessionIDCookie.Value)
 	}
 
-	component := pages.Index(indexProps)
+	var component = pages.Index(pageProps)
 	component.Render(context.Background(), ctx.Writer)
 }
 

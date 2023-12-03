@@ -3,6 +3,7 @@ package user
 // This file is concerned with taking a JWT from oauth2 and decoding it into a UserInfo struct.
 
 import (
+	"artika/api/data"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -12,39 +13,28 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-type UserInfo struct {
-	UniqueID        string `json:"uniqueID"`
-	FirstName       string `json:"firstName"`
-	LastName        string `json:"lastName"`
-	Email           string `json:"email"`
-	IsEmailVerified bool   `json:"isEmailVerified"`
-	PictureURI      string `json:"pictureURI"`
-	UnixTimeCreated int64  `json:"unixTimeCreated"`
-	UnixTimeExpires int64  `json:"unixTimeExpires"`
-}
-
-func DecodeJWT(jwtb64 string) (UserInfo, error) {
+func DecodeJWT(jwtb64 string) (data.UserInfo, error) {
 	// Should cache this in a file, only need to update it based on cache headers
 	json_string, err := downloadString("https://www.googleapis.com/oauth2/v3/certs")
 	if err != nil {
-		return UserInfo{}, err
+		return data.UserInfo{}, err
 	}
 
 	json := json.RawMessage(json_string)
 
 	jwks, err := keyfunc.NewJSON(json)
 	if err != nil {
-		return UserInfo{}, err
+		return data.UserInfo{}, err
 	}
 
 	token, err := jwt.Parse(jwtb64, jwks.Keyfunc)
 	if err != nil {
-		return UserInfo{}, err
+		return data.UserInfo{}, err
 	}
 
 	claims := token.Claims.(jwt.MapClaims)
 
-	var userInfo = UserInfo{
+	var userInfo = data.UserInfo{
 		UniqueID:        claims["sub"].(string),
 		FirstName:       claims["given_name"].(string),
 		LastName:        claims["family_name"].(string),

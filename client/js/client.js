@@ -10,6 +10,7 @@ class Client {
         return this.#post("api/session", {"JWT": jwt})
             .then((json) => {
                 Cookies.set("SessionID", json["SessionID"], { expires: 1 });
+                location.reload();
             });
     }
 
@@ -24,6 +25,7 @@ class Client {
         return this.#delete("api/session", {"SessionID": sessionID})
             .then((json) => {
                 Cookies.remove("SessionID");
+                location.reload();
             });
     }
 
@@ -31,9 +33,12 @@ class Client {
     #fetch(url, method, body) {
         let options = {
             method: method,
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(body)
+            headers: { "Content-Type": "application/json" }
         };
+
+        if (body !== null) {
+            options["body"] = JSON.stringify(body);
+        }
 
         let promise = fetch(`${this.#backendURL}/${url}`, options)
                      .then(response => response.json());
@@ -41,8 +46,8 @@ class Client {
         return promise;
     }
 
-    #get(url, body) {
-        return this.#fetch(url, "GET", body);
+    #get(url) {
+        return this.#fetch(url, "GET", null);
     }
 
     #post(url, body) {
