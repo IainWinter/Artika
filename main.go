@@ -9,32 +9,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type SessionValidateArgs struct {
-	SessionID string `json:"session-id"`
-}
-
-func routeSessionValidate(ctx *gin.Context) {
-	var args SessionValidateArgs
-
-	err := ctx.BindJSON(&args)
-	if err != nil {
-		ctx.AbortWithStatus(http.StatusBadRequest)
-		return
-	}
-
-	isSessionValid, err := user.IsSessionValid(args.SessionID)
-	if err != nil {
-		ctx.AbortWithStatus(http.StatusBadRequest)
-		return
-	}
-
-	ctx.IndentedJSON(http.StatusOK, gin.H{
-		"is-session-valid": isSessionValid,
-	})
-}
-
 type SessionCreateRequestBody struct {
-	JWT string `json:"jwt"`
+	JWT string `json:"JWT"`
 }
 
 func routeSessionCreate(ctx *gin.Context) {
@@ -58,40 +34,55 @@ func routeSessionCreate(ctx *gin.Context) {
 		return
 	}
 
-	ctx.IndentedJSON(http.StatusOK, gin.H{
-		"session-id": userSession.UniqueID,
+	ctx.IndentedJSON(http.StatusCreated, gin.H{
+		"SessionID": userSession.UniqueID,
 	})
 }
 
-func routeIndex(ctx *gin.Context) {
-	// get the session-id from the cookie
-	// if the session-id is valid, then render the index page
-	// else, render the login page
+type SessionDeleteRequestBody struct {
+	SessionID string `json:"SessionID"`
+}
 
-	sessionIDCookie, err := ctx.Request.Cookie("session-id")
+func routeSessionDelete(ctx *gin.Context) {
+	var args SessionDeleteRequestBody
+
+	err := ctx.BindJSON(&args)
 	if err != nil {
 		ctx.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
 
+	err = user.DeleteSession(args.SessionID)
+	if err != nil {
+		ctx.AbortWithStatus(http.StatusBadRequest)
+		return
+	}
+
+	ctx.IndentedJSON(http.StatusOK, gin.H{})
+}
+
+func routeIndex(ctx *gin.Context) {
 	var indexProps = pages.IndexComponentProps{}
 
-	isSessionValid, err := user.IsSessionValid(sessionIDCookie.Value)
-	if err != nil {
-		ctx.AbortWithStatus(http.StatusBadRequest)
-		return
-	}
-
-	indexProps.IsSessionValid = isSessionValid
-
-	if isSessionValid {
-		userInfo, err := user.GetUserFromSessionID(sessionIDCookie.Value)
+	sessionIDCookie, err := ctx.Request.Cookie("SessionID")
+	if err != http.ErrNoCookie {
+		isSessionValid, err := user.IsSessionValid(sessionIDCookie.Value)
 		if err != nil {
 			ctx.AbortWithStatus(http.StatusBadRequest)
 			return
 		}
 
-		indexProps.UserInfo = userInfo
+		indexProps.IsSessionValid = isSessionValid
+
+		if isSessionValid {
+			userInfo, err := user.GetUserFromSessionID(sessionIDCookie.Value)
+			if err != nil {
+				ctx.AbortWithStatus(http.StatusBadRequest)
+				return
+			}
+
+			indexProps.UserInfo = userInfo
+		}
 	}
 
 	component := pages.Index(indexProps)
@@ -115,8 +106,9 @@ func addAPIHeaders() gin.HandlerFunc {
 func main() {
 	router := gin.Default()
 	router.Use(addAPIHeaders())
-	router.POST("/api/session/validate", routeSessionValidate)
-	router.POST("/api/session/create", routeSessionCreate)
+
+	router.POST("/api/session", routeSessionCreate)
+	router.DELETE("/api/session", routeSessionDelete)
 
 	router.Static("js", "./client/js")
 	router.GET("/", routeIndex)

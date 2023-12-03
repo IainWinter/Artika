@@ -19,15 +19,17 @@ templ Index(props IndexComponentProps) {
 		</head>
 		<body>
 			<script src="js/extern/cookie.js"></script>
-
-			<script src="js/config.js"></script>
-			<script src="js/login.js"></script>
+			<script src="js/client.js"></script>
 
 			if props.IsSessionValid {
 				<div>
 					<h1>Welcome {props.UserInfo.FirstName}</h1>
 					<h2>Here is your profile picture</h2>
 					<img src={props.UserInfo.PictureURI} alt="Profile Picture"/>
+
+					<button onclick="G_Client.deleteSession();">
+						Log Out
+					</button>
 				</div>
 			} else {
 				<div>

@@ -80,10 +80,10 @@ func CreateSession(user UserInfo) (UserSession, error) {
 	return session, nil
 }
 
-func DeleteSession(user UserInfo) error {
+func DeleteSession(sessionID string) error {
 	var sessionIndex int = -1
 	for i, s := range sessions {
-		if s.UserID == user.UniqueID {
+		if s.UniqueID == sessionID {
 			sessionIndex = i
 		}
 	}
