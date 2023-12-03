@@ -32,7 +32,7 @@ func Index() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</title><meta viewport=\"width=device-width, initial-scale=1.0\"><meta name=\"htmx-config\" content=\"{&#34;methodsThatUseUrlParams&#34;:[]}\"></head><body><script src=\"https://unpkg.com/htmx.org@1.9.9\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</title><meta viewport=\"width=device-width, initial-scale=1.0\"><meta name=\"htmx-config\" content=\"{methodsThatUseUrlParams:[]}\"></head><body><script src=\"https://unpkg.com/htmx.org@1.9.9\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
