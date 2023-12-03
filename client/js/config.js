@@ -1,6 +1,6 @@
 // This file contains the configuration for the client application
 
-let G_ServerBackend = "http://localhost:3001";
+let G_ServerBackend = "http://localhost:3000";
 
 /**
  * Wrap a fetch call to the server backend and decode it to json upon completion. 

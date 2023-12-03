@@ -1,19 +1,40 @@
 package pages
 
-templ Index() {
+import (
+	"artika/api/user"
+	"artika/client/template/components"
+)
 
+type IndexComponentProps struct {
+	IsSessionValid bool
+	UserInfo *user.UserInfo
+}
+
+templ Index(props IndexComponentProps) {
 	<html>
 		<head>
 			<title>Testing Google Signin</title>
 			<meta viewport="width=device-width, initial-scale=1.0"/>
-			<meta name="htmx-config" content="{methodsThatUseUrlParams:[]}"/>
+			<meta name="htmx-config" content='{"methodsThatUseUrlParams":[]}'/>
 		</head>
 		<body>
-			<script src="https://unpkg.com/htmx.org@1.9.9"></script>
 			<script src="js/extern/cookie.js"></script>
 
 			<script src="js/config.js"></script>
 			<script src="js/login.js"></script>
+
+			if props.IsSessionValid {
+				<div>
+					<h1>Welcome {props.UserInfo.FirstName}</h1>
+					<h2>Here is your profile picture</h2>
+					<img src={props.UserInfo.PictureURI} alt="Profile Picture"/>
+				</div>
+			} else {
+				<div>
+					<h1>Sign in with Google</h1>
+					@components.GoogleSigninButton()
+				</div>
+			}
 
 			// <script>
 			// 	// To make the go functions simple and consistant
@@ -21,8 +42,7 @@ templ Index() {
 			// 	htmx.config.methodsThatUseUrlParams = [];
 			// </script>
 
-			<div hx-get="/component/account" hx-trigger="load" hx-swap="innerHTML" hx-vals="js:{SessionID: getSessionId()}"></div>
-
+			<script src="https://unpkg.com/htmx.org@1.9.9"></script>
 		</body>
 	</html>
 }

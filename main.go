@@ -64,28 +64,38 @@ func routeSessionCreate(ctx *gin.Context) {
 }
 
 func routeIndex(ctx *gin.Context) {
-	component := pages.Index()
-	component.Render(context.Background(), ctx.Writer)
-}
+	// get the session-id from the cookie
+	// if the session-id is valid, then render the index page
+	// else, render the login page
 
-type SessionArgs struct {
-	SessionID string `json:"SessionID"`
-}
-
-func routeComponentAccount(ctx *gin.Context) {
-	var args SessionArgs
-
-	err := ctx.BindJSON(&args)
+	sessionIDCookie, err := ctx.Request.Cookie("session-id")
 	if err != nil {
 		ctx.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
 
-	// _, err := user.IsSessionValid(args.SessionID)
-	// if err != nil {
-	// 	ctx.AbortWithStatus(http.StatusBadRequest)
-	// 	return
-	// }
+	var indexProps = pages.IndexComponentProps{}
+
+	isSessionValid, err := user.IsSessionValid(sessionIDCookie.Value)
+	if err != nil {
+		ctx.AbortWithStatus(http.StatusBadRequest)
+		return
+	}
+
+	indexProps.IsSessionValid = isSessionValid
+
+	if isSessionValid {
+		userInfo, err := user.GetUserFromSessionID(sessionIDCookie.Value)
+		if err != nil {
+			ctx.AbortWithStatus(http.StatusBadRequest)
+			return
+		}
+
+		indexProps.UserInfo = userInfo
+	}
+
+	component := pages.Index(indexProps)
+	component.Render(context.Background(), ctx.Writer)
 }
 
 func addAPIHeaders() gin.HandlerFunc {
@@ -110,6 +120,5 @@ func main() {
 
 	router.Static("js", "./client/js")
 	router.GET("/", routeIndex)
-	router.GET("/component/account", routeComponentAccount)
 	router.Run("localhost:3000")
 }
