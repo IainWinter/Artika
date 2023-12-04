@@ -9,7 +9,14 @@ templ UserInline(props prop.UserProps) {
     </div>
     
     <div id="user-inline-settings-popup" class="user-inline-settings-popup" hidden>
-        <button onclick="G_Client.deleteSession();">Log Out</button>
+        <div class="inline-button" onclick="">
+            <i class="bi bi-person-fill-gear"></i>
+            <p>Account</p>
+        </div>
+        <div class="inline-button" onclick="G_Client.deleteSession();">
+            <i class="bi bi-box-arrow-left"></i>
+            <p>Log Out</p>
+        </div>
     </div>
 
     <style>
@@ -53,6 +60,28 @@ templ UserInline(props prop.UserProps) {
             border-radius: 5px;
             padding: 10px;
             box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }
+
+        .user-inline-settings-popup .inline-button {
+            display: flex;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #f1f1f1;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .user-inline-settings-popup .inline-button:hover {
+            background-color: #ddd;
+        }
+
+         .user-inline-settings-popup .inline-button i {
+            font-size: 1.6em;
+        }
+
+        .user-inline-settings-popup .inline-button p {
+            margin: auto;
         }
 
     </style>

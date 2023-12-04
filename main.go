@@ -90,6 +90,7 @@ func main() {
 	router.DELETE("/api/session", routeSessionDelete)
 
 	router.Static("js", "./client/js")
+	router.Static("css", "./client/css")
 	router.GET("/", routeIndex)
 	router.Run("localhost:3000")
 }
