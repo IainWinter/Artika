@@ -1,0 +1,45 @@
+package components
+
+templ FinishedDesignCardDeck() {
+    <div class="card-deck">
+        <div class="left">
+            @FinishedDesignCard()
+            @FinishedDesignCard()
+            @FinishedDesignCard()
+            @FinishedDesignCard()
+        </div>
+        <div class="right">
+            @FinishedDesignCard()
+            @FinishedDesignCard()
+            @FinishedDesignCard()
+            @FinishedDesignCard()
+        </div>
+    </div>
+
+    <style>
+        .card-deck {
+            display: flex;
+            justify-content: space-between;
+            margin: 0 auto;
+        }
+
+        .card-deck .left {
+            margin-right: .5em;
+        }
+
+        .card-deck .right {
+            margin-left: .5em;
+            margin-top: 4em;
+        }
+
+        .card-deck .card {
+            width: 11em;
+            aspect-ratio: 9/12;
+            padding: 1em;
+            background: #ddd;
+            margin-bottom: 1em;
+            border-radius: 1em;
+        }
+
+    </style>
+}

@@ -27,6 +27,10 @@ templ Index(props prop.IndexProps) {
 				</div>
 			</div>
 
+			<div class="content">
+				@components.FinishedDesignCardDeck()
+			</div>
+
 			<style>
 				html, body {
 					margin: 0;
@@ -43,10 +47,17 @@ templ Index(props prop.IndexProps) {
 					justify-content: space-between;
 					overflow-x: hidden;
     				padding: 1em;
+
+					max-width: 1200px;
+					margin: 0 auto;
 				}
 
 				.top-banner-right {
 					margin-left: auto;
+					display: flex;
+				}
+
+				.content {
 					display: flex;
 				}
 
