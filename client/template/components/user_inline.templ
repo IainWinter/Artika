@@ -1,0 +1,82 @@
+package components
+
+import "artika/client/template/prop"
+
+templ UserInline(props prop.UserProps) {
+    <div id="user-inline" class="user-inline">
+        <p>{props.Name}</p>
+        <img src={props.PictureURI} alt="Profile Picture"/>
+    </div>
+    
+    <div id="user-inline-settings-popup" class="user-inline-settings-popup" hidden>
+        <button onclick="G_Client.deleteSession();">Log Out</button>
+    </div>
+
+    <style>
+        .user-inline-anchor {
+            position: relative;
+        }
+
+        .user-inline {
+            display: flex;
+            flex-direction: row;
+            cursor: pointer;
+            user-select: none;
+
+            transition: background-color 0.2s;
+        }
+
+        .user-inline:hover {
+            background-color: #f1f1f1;
+        }
+
+        .user-inline p {
+            font-size: 20px;
+            margin: auto 0;
+        }
+
+        .user-inline img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-left: 10px;
+        }
+
+        .user-inline-settings-popup {
+            position: fixed;
+            top: 5em;
+            right: 1em;
+            width: 200px;
+            background-color: #f1f1f1;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }
+
+    </style>
+
+    <script>
+        let userInline = document.getElementById("user-inline");
+        let userInlinePopup = document.getElementById("user-inline-settings-popup");
+
+        function userInlineOnClickShowPopup() {
+            userInlinePopup.hidden = false;
+            userInline.onclick = {};
+
+            // Make anywhere on the page close the popup, expcet the popup itself
+            window.onclick = function(event) {
+                if (event.target !== userInlinePopup) {
+                    userInlinePopup.hidden = true;
+                    userInline.onclick = userInlineOnClickShowPopup;
+                }
+            }
+
+            // required to not bubble to window
+            event.stopPropagation();
+        }
+
+        userInline.onclick = userInlineOnClickShowPopup;
+
+    </script>
+}

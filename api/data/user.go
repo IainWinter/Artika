@@ -7,14 +7,16 @@ import (
 )
 
 type UserInfo struct {
-	UniqueID        string `json:"uniqueID"`
-	FirstName       string `json:"firstName"`
-	LastName        string `json:"lastName"`
-	Email           string `json:"email"`
-	IsEmailVerified bool   `json:"isEmailVerified"`
-	PictureURI      string `json:"pictureURI"`
-	UnixTimeCreated int64  `json:"unixTimeCreated"`
-	UnixTimeExpires int64  `json:"unixTimeExpires"`
+	UniqueID           string `json:"uniqueID"`
+	FirstName          string `json:"firstName"`
+	LastName           string `json:"lastName"`
+	Email              string `json:"email"`
+	IsEmailVerified    bool   `json:"isEmailVerified"`
+	PictureURI         string `json:"pictureURI"`
+	UnixTimeCreated    int64  `json:"unixTimeCreated"`
+	UnixTimeExpires    int64  `json:"unixTimeExpires"`
+	HasShippingAddress bool   `json:"HasShippingAddress"`
+	IsDesigner         bool   `json:"isDesigner"`
 }
 
 type UserSession struct {

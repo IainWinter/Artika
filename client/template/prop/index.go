@@ -1,9 +1,8 @@
-package props
+package prop
 
 import (
 	"artika/api/data"
 	"artika/api/user"
-	"artika/client/template/pages"
 	"errors"
 )
 
@@ -14,23 +13,23 @@ type IndexProps struct {
 	UserInfo       data.UserInfo
 }
 
-func GetIndexPagePropsFromSessionID(sessionID string) (pages.IndexProps, error) {
+func GetIndexPagePropsFromSessionID(sessionID string) (IndexProps, error) {
 	isSessionValid, err := user.IsSessionValid(sessionID)
 	if err != nil {
-		return pages.IndexProps{}, FailedToCreateIndexPagePropsErr
+		return IndexProps{}, FailedToCreateIndexPagePropsErr
 	}
 
 	if isSessionValid {
 		userInfo, err := user.GetUserFromValidSessionID(sessionID)
 		if err != nil {
-			return pages.IndexProps{}, FailedToCreateIndexPagePropsErr
+			return IndexProps{}, FailedToCreateIndexPagePropsErr
 		}
 
-		return pages.IndexProps{
+		return IndexProps{
 			IsSessionValid: isSessionValid,
 			UserInfo:       userInfo,
 		}, nil
 	}
 
-	return pages.IndexProps{}, nil
+	return IndexProps{}, nil
 }

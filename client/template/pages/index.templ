@@ -1,13 +1,11 @@
 package pages
 
 import (
-	"artika/api/data"
+	"artika/client/template/prop"
 	"artika/client/template/components"
 )
 
-
-
-templ Index(props IndexProps) {
+templ Index(props prop.IndexProps) {
 	<html>
 		<head>
 			<title>Testing Google Signin</title>
@@ -17,32 +15,42 @@ templ Index(props IndexProps) {
 			<script src="js/extern/cookie.js"></script>
 			<script src="js/client.js"></script>
 
-			if props.IsSessionValid {
-				<div>
-					<h1>Welcome {props.UserInfo.FirstName}</h1>
-					<h2>Here is your profile picture</h2>
-					<img src={props.UserInfo.PictureURI} alt="Profile Picture"/>
+			<div class="top-banner">
+				<h1>Artika</h1>
 
-					<button onclick="G_Client.deleteSession();">
-						Log Out
-					</button>
+				<div class="top-banner-right">
+					if props.IsSessionValid {
+						@components.UserInline(prop.GetUserPropsFromUserInfo(props.UserInfo))
+					} else {
+						@components.GoogleSigninButton()
+					}
 				</div>
+			</div>
 
-				<div>
+			<style>
+				html, body {
+					margin: 0;
+					padding: 0;
+					font-family: sans-serif;
+				}
 
-				</div>
-			} else {
-				<div>
-					<h1>Sign in with Google</h1>
-					@components.GoogleSigninButton()
-				</div>
-			}
+				p, h1, h2 {
+					margin: 0;
+				}
 
-			// <script>
-			// 	// To make the go functions simple and consistant
-			// 	// just send everything in the body
-			// 	htmx.config.methodsThatUseUrlParams = [];
-			// </script>
+				.top-banner {
+					display: flex;
+					justify-content: space-between;
+					overflow-x: hidden;
+    				padding: 1em;
+				}
+
+				.top-banner-right {
+					margin-left: auto;
+					display: flex;
+				}
+
+			</style>
 
 			<script src="https://unpkg.com/htmx.org@1.9.9"></script>
 		</body>

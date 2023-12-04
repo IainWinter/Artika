@@ -3,7 +3,7 @@ package main
 import (
 	"artika/api/user"
 	"artika/client/template/pages"
-	"artika/client/template/props"
+	"artika/client/template/prop"
 	"context"
 	"net/http"
 
@@ -57,11 +57,11 @@ func routeSessionDelete(ctx *gin.Context) {
 }
 
 func routeIndex(ctx *gin.Context) {
-	var pageProps pages.IndexProps
+	var pageProps prop.IndexProps
 
 	sessionIDCookie, err := ctx.Request.Cookie("SessionID")
 	if err != http.ErrNoCookie {
-		pageProps, err = props.GetIndexPagePropsFromSessionID(sessionIDCookie.Value)
+		pageProps, err = prop.GetIndexPagePropsFromSessionID(sessionIDCookie.Value)
 	}
 
 	var component = pages.Index(pageProps)
