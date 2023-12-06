@@ -6,30 +6,30 @@ import (
 	"errors"
 )
 
-var FailedToCreateIndexPagePropsErr = errors.New("Failed to create index page props")
+var FailedToCreateViewPropsErr = errors.New("Failed to create view props")
 
-type IndexProps struct {
+type ViewProps struct {
 	IsSessionValid bool
 	UserInfo       data.UserInfo
 }
 
-func GetIndexPagePropsFromSessionID(sessionID string) (IndexProps, error) {
+func GetViewPropsFromSessionID(sessionID string) (ViewProps, error) {
 	isSessionValid, err := user.IsSessionValid(sessionID)
 	if err != nil {
-		return IndexProps{}, FailedToCreateIndexPagePropsErr
+		return ViewProps{}, FailedToCreateViewPropsErr
 	}
 
 	if isSessionValid {
 		userInfo, err := user.GetUserFromValidSessionID(sessionID)
 		if err != nil {
-			return IndexProps{}, FailedToCreateIndexPagePropsErr
+			return ViewProps{}, FailedToCreateViewPropsErr
 		}
 
-		return IndexProps{
+		return ViewProps{
 			IsSessionValid: isSessionValid,
 			UserInfo:       userInfo,
 		}, nil
 	}
 
-	return IndexProps{}, nil
+	return ViewProps{}, nil
 }

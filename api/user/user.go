@@ -55,7 +55,9 @@ func DeleteSession(sessionID string) error {
 func IsSessionValid(sessionID string) (bool, error) {
 	isValid, err := database.IsSessionValid(sessionID)
 
-	if err != nil && err != data.SessionNotFoundErr {
+	// If the session is not valid, but the error is not front a database issue
+	// Then just return false, do not error
+	if err != nil && err != data.SessionExpiredErr && err != data.SessionNotFoundErr {
 		return false, FailedToValidateSessionErr
 	}
 

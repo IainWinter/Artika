@@ -9,7 +9,7 @@ templ UserInline(props prop.UserProps) {
     </div>
     
     <div id="user-inline-settings-popup" class="user-inline-settings-popup" hidden>
-        <div class="inline-button" onclick="">
+        <div class="inline-button" hx-get="/account" hx-push-url="true" hx-replace-url="true" hx-trigger="click" hx-target="#content" hx-swap="innerHTML">
             <i class="bi bi-person-fill-gear"></i>
             <p>Account</p>
         </div>
@@ -107,6 +107,5 @@ templ UserInline(props prop.UserProps) {
         }
 
         userInline.onclick = userInlineOnClickShowPopup;
-
     </script>
 }

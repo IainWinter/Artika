@@ -1,0 +1,68 @@
+package view
+
+import (
+	"artika/client/template/prop"
+	"artika/client/template/components"
+)
+
+templ Desktop(props prop.ViewProps, content templ.Component) {
+	<html>
+		<head>
+			<title>Artika</title>
+			<meta viewport="width=device-width, initial-scale=1.0"/>
+			<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"/>
+			<script src="https://unpkg.com/htmx.org@1.9.9"></script>
+			<script src="js/extern/cookie.js"></script>
+			<script src="js/client.js"></script>
+		</head>
+		<body>
+			<div class="top-banner">
+				<h1>Artika</h1>
+
+				<div class="top-banner-right">
+					if props.IsSessionValid {
+						@components.UserInline(prop.GetUserPropsFromUserInfo(props.UserInfo))
+					} else {
+						@components.GoogleSigninButton()
+					}
+				</div>
+			</div>
+
+			<div class="content" id="content">
+                @content
+            </div>
+
+			<style>
+				html, body {
+					margin: 0;
+					padding: 0;
+					font-family: sans-serif;
+				}
+
+				p, h1, h2 {
+					margin: 0;
+				}
+
+				.top-banner {
+					display: flex;
+					justify-content: space-between;
+					overflow-x: hidden;
+    				padding: 1em;
+
+					max-width: 1200px;
+					margin: 0 auto;
+				}
+
+				.top-banner-right {
+					margin-left: auto;
+					display: flex;
+				}
+
+				.content {
+					display: flex;
+				}
+			</style>
+		</body>
+
+	</html>
+}
