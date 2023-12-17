@@ -5,7 +5,6 @@ templ GoogleSigninButton() {
 
     <script src="https://accounts.google.com/gsi/client"></script>
     <script>
-        console.log("Page finished loading");
         google.accounts.id.initialize({
             client_id: "610017510683-sbsc4b55b9ldnrojade80cr3vbf2ukkv.apps.googleusercontent.com",
             callback: response => G_Client.createSession(response.credential)

@@ -1,5 +1,62 @@
 package pages
 
-templ Account() {
-    <p>hello</p>
+import "artika/api/data"
+
+templ Account(props data.UserInfo) {
+    <h2>Hello {props.FirstName}</h2>
+
+    <h3>Account</h3>
+    <form class="col-form" hx-post="/user">
+        <div class="row"><label>First name</label><input type="text" name="firstName" value={props.FirstName} /></div>
+        <div class="row"><label>Last name</label><input type="text" name="lastName" value={props.LastName} /></div>
+        <div class="row"><label>Email</label><input type="text" name="email" value={props.Email} /></div>
+        <div class="row"><label>Address</label><input type="text" name="address" value={""} /></div>
+        <div class="row"><label>City</label><input type="text" name="city" value={""} /></div>
+        <div class="row"><label>State</label><input type="text" name="state" value={""} /></div>
+        <div class="row"><label>Zip</label><input type="text" name="zip" value={""} /></div>
+        <div class="row"><label>Country</label><input type="text" name="country" value={""} /></div>
+        <button type="submit">Save</button>
+    </form>
+
+    <h3>Designers</h3>
+
+    if props.IsDesigner {
+        <p>You are a registered designer.</p>
+        <p>People can contact you with requests.</p>
+    } else {
+        <div id="designer">
+            <p>Register as a designer to advertise your services.</p>
+            <p>This will add you to a list of public designers and people will be able to contact you with requests.</p>
+            <button hx-post="/user/enableDesigner" hx-trigger="click" hx-target="#designer">Register</button>
+        </div>
+    }
+
+    <style>
+        .col-form {
+            display: flex;
+            flex-direction: column;
+            max-width: 600px;
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1em;
+        }
+
+        .row label {
+            width: 25%;
+            font-size: 1em;
+            margin: auto;
+        }
+
+        .row input {
+            width: 75%;
+            height: 35px;
+            border: 1px solid black;
+            border-radius: 5px;
+            font-size: 1em;
+            padding: 1em 0.5em;
+        }
+    </style>
 }

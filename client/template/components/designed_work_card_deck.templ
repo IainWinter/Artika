@@ -1,22 +1,29 @@
 package components
 
 templ FinishedDesignCardDeck() {
-    <div class="card-deck">
-        <div class="left">
-            @FinishedDesignCard()
-            @FinishedDesignCard()
-            @FinishedDesignCard()
-            @FinishedDesignCard()
-        </div>
-        <div class="right">
-            @FinishedDesignCard()
-            @FinishedDesignCard()
-            @FinishedDesignCard()
-            @FinishedDesignCard()
+    <div class="card-container">
+        <div class="card-deck">
+            <div class="left">
+                @FinishedDesignCard()
+                @FinishedDesignCard()
+                @FinishedDesignCard()
+                @FinishedDesignCard()
+            </div>
+            <div class="right">
+                @FinishedDesignCard()
+                @FinishedDesignCard()
+                @FinishedDesignCard()
+                @FinishedDesignCard()
+            </div>
         </div>
     </div>
 
     <style>
+        .card-container {
+            width: 100%;
+            display: flex;
+        }
+
         .card-deck {
             display: flex;
             justify-content: space-between;

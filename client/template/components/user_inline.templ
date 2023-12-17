@@ -90,20 +90,22 @@ templ UserInline(props prop.UserProps) {
         let userInline = document.getElementById("user-inline");
         let userInlinePopup = document.getElementById("user-inline-settings-popup");
 
+        function windowOnClickClosePopup(event) {
+            if (event.target !== userInlinePopup) {
+                userInlinePopup.hidden = true;
+                userInline.onclick = userInlineOnClickShowPopup;
+            }
+        }
+
         function userInlineOnClickShowPopup() {
+            // required to not bubble to window
+            event.stopPropagation();
+
             userInlinePopup.hidden = false;
             userInline.onclick = {};
 
             // Make anywhere on the page close the popup, expcet the popup itself
-            window.onclick = function(event) {
-                if (event.target !== userInlinePopup) {
-                    userInlinePopup.hidden = true;
-                    userInline.onclick = userInlineOnClickShowPopup;
-                }
-            }
-
-            // required to not bubble to window
-            event.stopPropagation();
+            window.onclick = windowOnClickClosePopup;
         }
 
         userInline.onclick = userInlineOnClickShowPopup;

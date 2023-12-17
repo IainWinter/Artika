@@ -14,6 +14,7 @@ var FailedToRegisterSession = errors.New("Failed to register session")
 var FailedToDeleteSessionErr = errors.New("Failed to delete session")
 var FailedToValidateSessionErr = errors.New("Failed to validate session")
 var FailedToFindUserFromSessionIDErr = errors.New("Failed to find user from session ID")
+var FailedToEnableUserAsDesignerErr = errors.New("Failed to enable user as designer")
 
 var database = data.NewArrayDatabaseConnection()
 
@@ -71,4 +72,22 @@ func GetUserFromValidSessionID(sessionID string) (data.UserInfo, error) {
 	}
 
 	return userInfo, nil
+}
+
+func GetAllPublicDesigners() ([]data.UserInfoPublic, error) {
+	designers, err := database.GetAllPublicDesigners()
+	if err != nil {
+		return []data.UserInfoPublic{}, err
+	}
+
+	return designers, nil
+}
+
+func EnableUserAsDesignerFromSessionID(sessionID string) error {
+	err := database.EnableUserAsDesignerFromSessionID(sessionID)
+	if err != nil {
+		return FailedToEnableUserAsDesignerErr
+	}
+
+	return nil
 }

@@ -97,3 +97,44 @@ func (db *ArrayDatabaseConnection) GetUserFromValidSessionID(sessionID string) (
 
 	return UserInfo{}, UserNotFoundErr
 }
+
+func (db *ArrayDatabaseConnection) GetAllPublicDesigners() ([]UserInfoPublic, error) {
+	var designers []UserInfoPublic
+
+	for _, u := range db.users {
+		if u.IsDesigner {
+			var designer UserInfoPublic
+			designer.UniqueID = u.UniqueID
+			designer.FirstName = u.FirstName
+			designer.LastName = u.LastName
+			designer.PictureURI = u.PictureURI
+
+			designers = append(designers, designer)
+		}
+	}
+
+	return designers, nil
+}
+
+func (db *ArrayDatabaseConnection) EnableUserAsDesignerFromSessionID(sessionID string) error {
+	var sessionIndex = -1
+	for i, s := range db.sessions {
+		if s.UniqueID == sessionID {
+			sessionIndex = i
+			break
+		}
+	}
+
+	if sessionIndex == -1 {
+		return SessionNotFoundErr
+	}
+
+	for i, u := range db.users {
+		if u.UniqueID == db.sessions[sessionIndex].UserID {
+			db.users[i].IsDesigner = true
+			return nil
+		}
+	}
+
+	return UserNotFoundErr
+}

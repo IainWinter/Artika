@@ -19,6 +19,13 @@ type UserInfo struct {
 	IsDesigner         bool   `json:"isDesigner"`
 }
 
+type UserInfoPublic struct {
+	UniqueID   string `json:"uniqueID"`
+	FirstName  string `json:"firstName"`
+	LastName   string `json:"lastName"`
+	PictureURI string `json:"pictureURI"`
+}
+
 type UserSession struct {
 	UniqueID        string `json:"uniqueID"`
 	UserID          string `json:"userID"`
