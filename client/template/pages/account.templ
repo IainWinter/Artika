@@ -2,61 +2,45 @@ package pages
 
 import "artika/api/data"
 
+templ sectionTitle(title string) {
+    <h3 class="text-3xl my-4 font-bold underline">{title}</h3>
+}
+
+templ inputRow(label string, name string, value string) {
+    <div class="flex justify-between mb-4">
+        <label class="w-1/4 text-base mx-auto">{label}</label>
+        <input class="w-3/4 h-10 border border-black rounded-md text-base px-2 py-1" type="text" name={name} value={value} />
+    </div>
+}
+
 templ Account(props data.UserInfo) {
-    <h2>Hello {props.FirstName}</h2>
+    <div class="mx-auto max-w-xl">
+        @sectionTitle("Account")
 
-    <h3>Account</h3>
-    <form class="col-form" hx-post="/user">
-        <div class="row"><label>First name</label><input type="text" name="firstName" value={props.FirstName} /></div>
-        <div class="row"><label>Last name</label><input type="text" name="lastName" value={props.LastName} /></div>
-        <div class="row"><label>Email</label><input type="text" name="email" value={props.Email} /></div>
-        <div class="row"><label>Address</label><input type="text" name="address" value={""} /></div>
-        <div class="row"><label>City</label><input type="text" name="city" value={""} /></div>
-        <div class="row"><label>State</label><input type="text" name="state" value={""} /></div>
-        <div class="row"><label>Zip</label><input type="text" name="zip" value={""} /></div>
-        <div class="row"><label>Country</label><input type="text" name="country" value={""} /></div>
-        <button type="submit">Save</button>
-    </form>
+        <form class="flex flex-col" hx-post="/user/info" hx-trigger="submit">
+            @inputRow("First Name", "firstName", props.FirstName)
+            @inputRow("Last Name", "lastName", props.LastName)
+            @inputRow("Email", "email", props.Email)
+            @inputRow("Address", "address", "")
+            @inputRow("City", "city", "")
+            @inputRow("State", "state", "")
+            @inputRow("Zip", "zip", "")
+            @inputRow("Country", "country", "")
+            
+            <button class="w-24 ml-auto bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" type="submit">Save</button>
+        </form>
 
-    <h3>Designers</h3>
+        @sectionTitle("Designers")
 
-    if props.IsDesigner {
-        <p>You are a registered designer.</p>
-        <p>People can contact you with requests.</p>
-    } else {
-        <div id="designer">
-            <p>Register as a designer to advertise your services.</p>
-            <p>This will add you to a list of public designers and people will be able to contact you with requests.</p>
-            <button hx-post="/user/enableDesigner" hx-trigger="click" hx-target="#designer">Register</button>
-        </div>
-    }
-
-    <style>
-        .col-form {
-            display: flex;
-            flex-direction: column;
-            max-width: 600px;
+        if props.IsDesigner {
+            <p>You are a registered designer.</p>
+            <p>People can contact you with requests.</p>
+        } else {
+            <div id="designer">
+                <p>Register as a designer to advertise your services.</p>
+                <p>This will add you to a list of public designers and people will be able to contact you with requests.</p>
+                <button hx-post="/user/enableDesigner" hx-trigger="click" hx-target="#designer">Register</button>
+            </div>
         }
-
-        .row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 1em;
-        }
-
-        .row label {
-            width: 25%;
-            font-size: 1em;
-            margin: auto;
-        }
-
-        .row input {
-            width: 75%;
-            height: 35px;
-            border: 1px solid black;
-            border-radius: 5px;
-            font-size: 1em;
-            padding: 1em 0.5em;
-        }
-    </style>
+    </div>
 }

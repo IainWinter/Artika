@@ -1,6 +1,7 @@
 package client
 
 import (
+	"artika/api/data"
 	"artika/api/user"
 	"artika/client/template/components"
 	"artika/client/template/pages"
@@ -65,7 +66,7 @@ func routeAccount(ctx *gin.Context) {
 	returnDesktop(ctx, viewProps, pages.Account(viewProps.UserInfo))
 }
 
-func routeUserEnableAsDesigner(ctx *gin.Context) {
+func routeUserDesignerEnable(ctx *gin.Context) {
 	sessionIDCookie, err := ctx.Request.Cookie("SessionID")
 
 	var success = false
@@ -81,8 +82,32 @@ func routeUserEnableAsDesigner(ctx *gin.Context) {
 	component.Render(context.Background(), ctx.Writer)
 }
 
-func routeUserEditInfo(ctx *gin.Context) {
+func routeUserInfoEdit(ctx *gin.Context) {
+	sessionIDCookie, err := ctx.Request.Cookie("SessionID")
 
+	var args = data.UserInfoUpdate{
+		FirstName: ctx.PostForm("firstName"),
+		LastName:  ctx.PostForm("lastName"),
+		//PictureURI: "",
+		//Email:     ctx.PostForm("email"),
+		//Address:   ctx.PostForm("address"),
+		//City:      ctx.PostForm("city"),
+		//State:     ctx.PostForm("state"),
+		//Zip:       ctx.PostForm("zip"),
+		//Country:   ctx.PostForm("country"),
+	}
+
+	var success = false
+
+	if err == nil {
+		err = user.UpdateUserInfoFromSessionID(sessionIDCookie.Value, args)
+		if err == nil {
+			success = true
+		}
+	}
+
+	var component = components.UserEnableDesignerSnippet(success)
+	component.Render(context.Background(), ctx.Writer)
 }
 
 func AddRoutes(router *gin.Engine) {
@@ -94,6 +119,6 @@ func AddRoutes(router *gin.Engine) {
 	router.GET("/account", routeAccount)
 
 	// Snippets which also have functionality
-	router.POST("/user", routeUserEditInfo)
-	router.POST("/user/enableDesigner", routeUserEnableAsDesigner)
+	router.POST("/user/info", routeUserInfoEdit)
+	router.POST("/user/enableDesigner", routeUserDesignerEnable)
 }

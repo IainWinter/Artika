@@ -15,6 +15,7 @@ var FailedToDeleteSessionErr = errors.New("Failed to delete session")
 var FailedToValidateSessionErr = errors.New("Failed to validate session")
 var FailedToFindUserFromSessionIDErr = errors.New("Failed to find user from session ID")
 var FailedToEnableUserAsDesignerErr = errors.New("Failed to enable user as designer")
+var FailedToUpdateUserInfoErr = errors.New("Failed to update user info")
 
 var database = data.NewArrayDatabaseConnection()
 
@@ -87,6 +88,15 @@ func EnableUserAsDesignerFromSessionID(sessionID string) error {
 	err := database.EnableUserAsDesignerFromSessionID(sessionID)
 	if err != nil {
 		return FailedToEnableUserAsDesignerErr
+	}
+
+	return nil
+}
+
+func UpdateUserInfoFromSessionID(sessionID string, userInfoUpdate data.UserInfoUpdate) error {
+	err := database.UpdateUserInfoFromSessionID(sessionID, userInfoUpdate)
+	if err != nil {
+		return FailedToUpdateUserInfoErr
 	}
 
 	return nil

@@ -26,6 +26,11 @@ type UserInfoPublic struct {
 	PictureURI string `json:"pictureURI"`
 }
 
+type UserInfoUpdate struct {
+	FirstName string `json:"firstName"`
+	LastName  string `json:"lastName"`
+}
+
 type UserSession struct {
 	UniqueID        string `json:"uniqueID"`
 	UserID          string `json:"userID"`

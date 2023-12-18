@@ -138,3 +138,28 @@ func (db *ArrayDatabaseConnection) EnableUserAsDesignerFromSessionID(sessionID s
 
 	return UserNotFoundErr
 }
+
+func (db *ArrayDatabaseConnection) UpdateUserInfoFromSessionID(sessionID string, userInfoUpdate UserInfoUpdate) error {
+	var sessionIndex = -1
+	for i, s := range db.sessions {
+		if s.UniqueID == sessionID {
+			sessionIndex = i
+			break
+		}
+	}
+
+	if sessionIndex == -1 {
+		return SessionNotFoundErr
+	}
+
+	for i, u := range db.users {
+		if u.UniqueID == db.sessions[sessionIndex].UserID {
+			db.users[i].FirstName = userInfoUpdate.FirstName
+			db.users[i].LastName = userInfoUpdate.LastName
+			//db.users[i].PictureURI = userInfoUpdate.PictureURI
+			return nil
+		}
+	}
+
+	return UserNotFoundErr
+}

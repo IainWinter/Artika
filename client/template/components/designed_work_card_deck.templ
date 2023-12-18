@@ -1,52 +1,28 @@
 package components
 
+templ finishedDesignCard() {
+    <div class="w-44 aspect-w-9 aspect-h-12 p-4 bg-gray-300 mb-4 rounded-md">
+        <h5>Finished Design</h5>
+        <p>This is where the finished design will be displayed.</p>
+        <a href="#">Download</a>
+    </div>
+}
+
 templ FinishedDesignCardDeck() {
-    <div class="card-container">
-        <div class="card-deck">
-            <div class="left">
-                @FinishedDesignCard()
-                @FinishedDesignCard()
-                @FinishedDesignCard()
-                @FinishedDesignCard()
+    <div class="w-full flex">
+        <div class="flex justify-between mx-auto">
+            <div class="mr-2">
+                @finishedDesignCard()
+                @finishedDesignCard()
+                @finishedDesignCard()
+                @finishedDesignCard()
             </div>
-            <div class="right">
-                @FinishedDesignCard()
-                @FinishedDesignCard()
-                @FinishedDesignCard()
-                @FinishedDesignCard()
+            <div class="ml-2 mt-16">
+                @finishedDesignCard()
+                @finishedDesignCard()
+                @finishedDesignCard()
+                @finishedDesignCard()
             </div>
         </div>
     </div>
-
-    <style>
-        .card-container {
-            width: 100%;
-            display: flex;
-        }
-
-        .card-deck {
-            display: flex;
-            justify-content: space-between;
-            margin: 0 auto;
-        }
-
-        .card-deck .left {
-            margin-right: .5em;
-        }
-
-        .card-deck .right {
-            margin-left: .5em;
-            margin-top: 4em;
-        }
-
-        .card-deck .card {
-            width: 11em;
-            aspect-ratio: 9/12;
-            padding: 1em;
-            background: #ddd;
-            margin-bottom: 1em;
-            border-radius: 1em;
-        }
-
-    </style>
 }

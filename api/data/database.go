@@ -51,5 +51,5 @@ type DatabaseConnectionInterface interface {
 	// If the session doesn't exist, return SessionNotFoundErr.
 	// If the user doesn't exist, return UserNotFoundErr.
 	// Can also return database connection errors.
-	UpdateUserInfoFromSessionID(sessionID string, userInfo UserInfo) error
+	UpdateUserInfoFromSessionID(sessionID string, userInfoUpdate UserInfoUpdate) error
 }
