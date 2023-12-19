@@ -1,6 +1,7 @@
 package api
 
 import (
+	"artika/api/data"
 	"artika/api/user"
 	"net/http"
 
@@ -72,7 +73,35 @@ func routeUserEnableAsDesigner(ctx *gin.Context) {
 		return
 	}
 
-	err = user.EnableUserAsDesignerFromSessionID(args.SessionID)
+	err = user.EnableUserAsDesignerForValidSessionID(args.SessionID)
+	if err != nil {
+		ctx.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+
+	ctx.IndentedJSON(http.StatusOK, gin.H{})
+}
+
+func routeWorkItemCreate(ctx *gin.Context) {
+	var args struct {
+		SessionID   string `json:"SessionID"`
+		Title       string `json:"Title"`
+		Description string `json:"Description"`
+	}
+
+	err := ctx.BindJSON(&args)
+
+	if err != nil {
+		ctx.AbortWithStatus(http.StatusBadRequest)
+		return
+	}
+
+	var createInfo = data.WorkItemCreateInfo{
+		Title:       args.Title,
+		Description: args.Description,
+	}
+
+	_, err = user.CreateWorkItemForValidSessionID(args.SessionID, createInfo)
 	if err != nil {
 		ctx.AbortWithStatus(http.StatusInternalServerError)
 		return
@@ -88,4 +117,8 @@ func AddRoutes(router *gin.Engine) {
 	router.POST("/api/user/enableDesigner", routeUserEnableAsDesigner)
 
 	router.GET("/api/designers", routeDesignersGetAllPublic)
+
+	router.POST("/api/workItem", routeWorkItemCreate)
+	// router.GET("/work/:workID", routeWorkGet)
+	// router.PUT("/work/:workID", routeWorkUpdate)
 }

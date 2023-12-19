@@ -1,0 +1,23 @@
+package pages
+
+import (
+    "artika/client/template/components"
+)
+
+templ CreateRequest() {
+    <div class="mx-auto max-w-xl">
+        @components.SectionTitle("New Request")
+
+        <form class="flex flex-col" hx-post="/workItem" hx-encoding="multipart/form-data" hx-target="#form-response" hx-trigger="submit">
+            @components.FormInputRow("Title", "title", "")
+            @components.FormInputRowTextbox("Description", "description", "")
+
+            <input type="file" name="test-file" />
+
+            <div class="flex">
+                <div class="flex" id="form-response"></div>
+                @components.FormButton("Create")
+            </div>
+        </form>
+    </div>
+}

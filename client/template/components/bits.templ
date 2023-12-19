@@ -1,0 +1,29 @@
+package components
+
+var buttonStyle = "w-36 ml-auto p-2 rounded bg-blue-500 hover:bg-blue-700 text-white font-bold"
+
+templ FormButton(text string) {
+    <button class={buttonStyle} type="submit">{text}</button>
+}
+
+templ HxButton(text string, endpoint string, target string) {
+    <button class={buttonStyle} hx-post={endpoint} hx-trigger="click" hx-target={target}>{text}</button>
+}
+
+templ SectionTitle(title string) {
+    <h3 class="text-3xl my-4 font-bold underline">{title}</h3>
+}
+
+templ FormInputRow(label string, name string, value string) {
+    <div class="flex justify-between mb-4">
+        <label class="w-1/4 h-6 text-base my-auto">{label}</label>
+        <input class="w-3/4 h-10 border border-black rounded-md text-base px-2 py-1" type="text" name={name} value={value} />
+    </div>
+}
+
+templ FormInputRowTextbox(label string, name string, value string) {
+    <div class="flex justify-between mb-4">
+        <label class="w-1/4 h-6 text-base my-auto">{label}</label>
+        <textarea class="w-3/4 h-10 border border-black rounded-md text-base px-2 py-1" type="text" name={name} value={value}></textarea>
+    </div>
+}

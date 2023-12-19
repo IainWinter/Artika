@@ -2,26 +2,36 @@ package components
 
 import "artika/client/template/prop"
 
+var userButtonStyle = "flex p-2 cursor-pointer transition duration-200 ease-in-out hover:bg-gray-300"
+
+templ pageSwitchButton(text string, icon string, page string) {
+    <div class={userButtonStyle} hx-get={page} hx-push-url="true" hx-replace-url="true" hx-trigger="click" hx-target="#content" hx-swap="innerHTML">
+        <i class={"text-2xl bi " + icon}></i>
+        <p class="m-auto">{text}</p>
+    </div>
+}
+
 templ UserInline(props prop.UserProps) {
     <div id="user-inline" class="flex flex-row cursor-pointer select-none rounded-full transition duration-200 ease-in-out hover:bg-gray-300">
         <p class="text-lg mx-auto my-auto ml-10 mr-20">{props.Name}</p>
         <img src={props.PictureURI} alt="pfp" class="w-12 h-12 rounded-full ml-10"/>
     </div>
     
-    <div id="user-inline-settings-popup" class="fixed top-20 right-4 w-48 bg-gray-100 border border-gray-300 rounded-md p-4 shadow-md" hidden>
-        <div class="flex p-2 rounded-md bg-gray-200 cursor-pointer transition duration-200 ease-in-out hover:bg-gray-300" hx-get="/account" hx-push-url="true" hx-replace-url="true" hx-trigger="click" hx-target="#content" hx-swap="innerHTML">
-            <i class="text-3xl bi bi-person-fill-gear"></i>
-            <p class="m-auto">Account</p>
-        </div>
-        <div class="flex p-2 mt-2 rounded-md bg-gray-200 cursor-pointer transition duration-200 ease-in-out hover:bg-gray-300" onclick="G_Client.deleteSession();">
-            <i class="text-3xl bi bi-box-arrow-left"></i>
+    <div id="user-inline-settings-popup" class="fixed top-20 right-4 w-64 bg-slate-50 border border-gray-300 rounded-xl shadow-md overflow-hidden" hidden>
+        @pageSwitchButton("Account", "bi-person-fill-gear", "/account")
+        @pageSwitchButton("My Requests", "bi-mailbox-flag", "/myRequests")
+        @pageSwitchButton("New Request", "bi-plus-circle", "/createRequest")
+        <div class={userButtonStyle} onclick="G_Client.deleteSession();">
+            <i class="text-2xl bi bi-box-arrow-left"></i>
             <p class="m-auto">Log Out</p>
         </div>
     </div>
 
     <script>
-        let userInline = document.getElementById("user-inline");
-        let userInlinePopup = document.getElementById("user-inline-settings-popup");
+        console.log("Add userinline click");
+
+        var userInline = document.getElementById("user-inline");
+        var userInlinePopup = document.getElementById("user-inline-settings-popup");
 
         function windowOnClickClosePopup(event) {
             if (event.target !== userInlinePopup) {
@@ -34,11 +44,11 @@ templ UserInline(props prop.UserProps) {
             // required to not bubble to window
             event.stopPropagation();
 
-            userInlinePopup.hidden = false;
-            userInline.onclick = {};
-
             // Make anywhere on the page close the popup, expcet the popup itself
             window.onclick = windowOnClickClosePopup;
+
+            userInlinePopup.hidden = false;
+            userInline.onclick = {};
         }
 
         userInline.onclick = userInlineOnClickShowPopup;

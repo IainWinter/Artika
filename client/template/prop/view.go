@@ -9,6 +9,7 @@ import (
 var FailedToCreateViewPropsErr = errors.New("Failed to create view props")
 
 type ViewProps struct {
+	Url            string
 	IsSessionValid bool
 	UserInfo       data.UserInfo
 }
@@ -20,7 +21,7 @@ func GetViewPropsFromSessionID(sessionID string) (ViewProps, error) {
 	}
 
 	if isSessionValid {
-		userInfo, err := user.GetUserFromValidSessionID(sessionID)
+		userInfo, err := user.GetUserForValidSessionID(sessionID)
 		if err != nil {
 			return ViewProps{}, FailedToCreateViewPropsErr
 		}

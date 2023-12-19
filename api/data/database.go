@@ -35,7 +35,7 @@ type DatabaseConnectionInterface interface {
 	// If the session doesn't exist, return SessionNotFoundErr.
 	// If the user doesn't exist, return UserNotFoundErr.
 	// Can also return database connection errors.
-	GetUserFromValidSessionID(sessionID string) (UserInfo, error)
+	GetUserForValidSessionID(sessionID string) (UserInfo, error)
 
 	// Get all public designers.
 	// Can also return database connection errors.
@@ -45,11 +45,30 @@ type DatabaseConnectionInterface interface {
 	// If the session doesn't exist, return SessionNotFoundErr.
 	// If the user doesn't exist, return UserNotFoundErr.
 	// Can also return database connection errors.
-	EnableUserAsDesignerFromSessionID(sessionID string) error
+	EnableUserAsDesignerForValidSessionID(sessionID string) error
 
 	// Update a user's info from a sessionID.
 	// If the session doesn't exist, return SessionNotFoundErr.
 	// If the user doesn't exist, return UserNotFoundErr.
 	// Can also return database connection errors.
-	UpdateUserInfoFromSessionID(sessionID string, userInfoUpdate UserInfoUpdate) error
+	UpdateUserInfoForValidSessionID(sessionID string, userInfoUpdate UserInfoUpdate) error
+
+	// Create a new work item and return its ID.
+	// If the session doesn't exist, return SessionNotFoundErr.
+	// If the user doesn't exist, return UserNotFoundErr.
+	// If the work item info is invalid, return InvalidInfoErr.
+	// Can also return database connection errors.
+	CreateWorkItemForValidSessionID(sessionID string, workItemCreateInfo WorkItemCreateInfo) (WorkItemInfo, error)
+
+	// Get all work items belonging to a user.
+	// If the session doesn't exist, return SessionNotFoundErr.
+	// If the user doesn't exist, return UserNotFoundErr.
+	// Can also return database connection errors.
+	GetAllWorkItemsForSessionID(sessionID string) ([]WorkItemInfo, error)
+
+	// Register a picture with the database
+	// If the user doesn't exist, return UserNotFoundErr.
+	// If the picture info is invalid, return InvalidInfoErr.
+	// Can also return database connection errors.
+	CreatePictureForValidSessionID(sessionID string, pictureCreateInfo PictureCreateInfo) (Picture, error)
 }

@@ -18,7 +18,13 @@ templ Desktop(props prop.ViewProps, content templ.Component) {
 		</head>
 		<body>
 			<div class="flex justify-between overflow-x-hidden p-4 mx-auto">
-				<h1 class="text-3xl leading-9 font-black">Artika</h1>
+				<h1 class="text-3xl leading-9 font-black">
+					if props.Url == "/" {
+						<p>Artika</p>
+					} else {
+						<p class="cursor-pointer" hx-get="/" hx-push-url="true" hx-replace-url="true" hx-trigger="click" hx-target="#content" hx-swap="innerHTML">Artika</p>
+					}
+				</h1>
 
 				<div class="flex ml-auto">
 					if props.IsSessionValid {
