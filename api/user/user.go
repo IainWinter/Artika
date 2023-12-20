@@ -24,6 +24,9 @@ var FailedToCreatePictureTooLargeErr = errors.New("Failed to create picture, too
 var FailedToCreatePictureFailedToStoreErr = errors.New("Failed to create picture, failed to store")
 
 var FailedToCreateWorkItemErr = errors.New("Failed to create work item")
+var FailedToGetAllWorkItemsErr = errors.New("Failed to get all work items")
+
+var FailedToGetImageNotFoundErr = errors.New("Failed to get image, not found")
 
 var database = data.NewArrayDatabaseConnection()
 var pictureStore = data.NewFilesystemPictureStore("./_pictures")
@@ -123,6 +126,15 @@ func CreateWorkItemForValidSessionID(sessionID string, workItemCreateInfo data.W
 	return workItem, nil
 }
 
+func GetAllWorkItemsForValidSessionID(sessionID string) ([]data.WorkItemInfo, error) {
+	workItems, err := database.GetAllWorkItemsForValidSessionID(sessionID)
+	if err != nil {
+		return []data.WorkItemInfo{}, FailedToGetAllWorkItemsErr
+	}
+
+	return workItems, nil
+}
+
 func StorePictureForValidSessionID(sessionID string, file multipart.File, header *multipart.FileHeader) (data.Picture, error) {
 	if header.Size > 10e6 {
 		return data.Picture{}, FailedToCreatePictureTooLargeErr
@@ -137,10 +149,24 @@ func StorePictureForValidSessionID(sessionID string, file multipart.File, header
 		URI: filename,
 	}
 
-	picture, err := database.CreatePictureForValidSessionID(sessionID, pictureCreateInfo)
+	picture, err := database.GetOrCreatePictureForValidSessionID(sessionID, pictureCreateInfo)
 	if err != nil {
 		return data.Picture{}, FailedToCreatePictureFailedToStoreErr
 	}
 
 	return picture, nil
+}
+
+func GetPicture(pictureID string) (data.PictureFileData, error) {
+	picture, err := database.GetPictureFromPictureID(pictureID)
+	if err != nil {
+		return data.PictureFileData{}, FailedToGetImageNotFoundErr
+	}
+
+	pictureData, err := pictureStore.GetPicture(picture.URI)
+	if err != nil {
+		return data.PictureFileData{}, FailedToGetImageNotFoundErr
+	}
+
+	return pictureData, nil
 }

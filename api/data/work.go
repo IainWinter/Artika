@@ -5,11 +5,7 @@ type WorkItemInfo struct {
 	CreatorUserID string
 	Title         string
 	Description   string
-}
-
-type WorkItemPicture struct {
-	PictureID string
-	WorkID    string
+	PictureIDs    []string
 }
 
 type WorkItemCreateInfo struct {

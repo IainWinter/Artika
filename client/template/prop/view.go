@@ -12,6 +12,7 @@ type ViewProps struct {
 	Url            string
 	IsSessionValid bool
 	UserInfo       data.UserInfo
+	SessionID      string
 }
 
 func GetViewPropsFromSessionID(sessionID string) (ViewProps, error) {
@@ -29,6 +30,7 @@ func GetViewPropsFromSessionID(sessionID string) (ViewProps, error) {
 		return ViewProps{
 			IsSessionValid: isSessionValid,
 			UserInfo:       userInfo,
+			SessionID:      sessionID,
 		}, nil
 	}
 

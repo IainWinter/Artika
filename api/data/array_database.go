@@ -7,11 +7,10 @@ import (
 )
 
 type ArrayDatabaseConnection struct {
-	sessions         []UserSession
-	users            []UserInfo
-	workItems        []WorkItemInfo
-	workItemPictures []WorkItemPicture
-	pictures         []Picture
+	sessions  []UserSession
+	users     []UserInfo
+	workItems []WorkItemInfo
+	pictures  []Picture
 }
 
 func NewArrayDatabaseConnection() DatabaseConnectionInterface {
@@ -171,23 +170,15 @@ func (db *ArrayDatabaseConnection) CreateWorkItemForValidSessionID(sessionID str
 		CreatorUserID: userInfo.UniqueID,
 		Title:         workItemCreateInfo.Title,
 		Description:   workItemCreateInfo.Description,
+		PictureIDs:    workItemCreateInfo.PictureIDs,
 	}
 
 	db.workItems = append(db.workItems, workItem)
 
-	for _, id := range workItemCreateInfo.PictureIDs {
-		var workItemPicture = WorkItemPicture{
-			PictureID: id,
-			WorkID:    workItem.WorkID,
-		}
-
-		db.workItemPictures = append(db.workItemPictures, workItemPicture)
-	}
-
 	return workItem, nil
 }
 
-func (db *ArrayDatabaseConnection) GetAllWorkItemsForSessionID(sessionID string) ([]WorkItemInfo, error) {
+func (db *ArrayDatabaseConnection) GetAllWorkItemsForValidSessionID(sessionID string) ([]WorkItemInfo, error) {
 	userInfo, err := db.GetUserForValidSessionID(sessionID)
 
 	if err != nil {
@@ -205,20 +196,37 @@ func (db *ArrayDatabaseConnection) GetAllWorkItemsForSessionID(sessionID string)
 	return workItems, nil
 }
 
-func (db *ArrayDatabaseConnection) CreatePictureForValidSessionID(sessionID string, pictureCreateInfo PictureCreateInfo) (Picture, error) {
+func (db *ArrayDatabaseConnection) GetOrCreatePictureForValidSessionID(sessionID string, pictureCreateInfo PictureCreateInfo) (Picture, error) {
 	userInfo, err := db.GetUserForValidSessionID(sessionID)
 
 	if err != nil {
 		return Picture{}, err
 	}
 
+	for _, p := range db.pictures {
+		if p.Hash == pictureCreateInfo.Hash {
+			return p, nil
+		}
+	}
+
 	var picture = Picture{
 		PictureID: uuid.New().String(),
 		UserID:    userInfo.UniqueID,
 		URI:       pictureCreateInfo.URI,
+		Hash:      pictureCreateInfo.Hash,
 	}
 
 	db.pictures = append(db.pictures, picture)
 
 	return picture, nil
+}
+
+func (db *ArrayDatabaseConnection) GetPictureFromPictureID(pictureID string) (Picture, error) {
+	for _, p := range db.pictures {
+		if p.PictureID == pictureID {
+			return p, nil
+		}
+	}
+
+	return Picture{}, PictureNotFoundErr
 }

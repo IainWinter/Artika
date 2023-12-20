@@ -105,7 +105,9 @@ func routeMyRequests(ctx *gin.Context) {
 		return
 	}
 
-	returnDesktop(ctx, viewProps, pages.MyRequests())
+	workRequests, err := user.GetAllWorkItemsForValidSessionID(viewProps.SessionID)
+
+	returnDesktop(ctx, viewProps, pages.MyRequests(workRequests))
 }
 
 func routeUserDesignerEnable(ctx *gin.Context) {

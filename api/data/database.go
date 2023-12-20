@@ -6,6 +6,7 @@ var SessionExpiredErr = errors.New("Session expired")
 var SessionNotFoundErr = errors.New("Session not found")
 var UserNotFoundErr = errors.New("User not found")
 var InvalidInfoErr = errors.New("Invalid info")
+var PictureNotFoundErr = errors.New("Picture not found")
 
 type DatabaseConnectionInterface interface {
 	Connect(connectionString string) error
@@ -64,11 +65,17 @@ type DatabaseConnectionInterface interface {
 	// If the session doesn't exist, return SessionNotFoundErr.
 	// If the user doesn't exist, return UserNotFoundErr.
 	// Can also return database connection errors.
-	GetAllWorkItemsForSessionID(sessionID string) ([]WorkItemInfo, error)
+	GetAllWorkItemsForValidSessionID(sessionID string) ([]WorkItemInfo, error)
 
 	// Register a picture with the database
+	// If the URI already exists, return existing picture.
 	// If the user doesn't exist, return UserNotFoundErr.
 	// If the picture info is invalid, return InvalidInfoErr.
 	// Can also return database connection errors.
-	CreatePictureForValidSessionID(sessionID string, pictureCreateInfo PictureCreateInfo) (Picture, error)
+	GetOrCreatePictureForValidSessionID(sessionID string, pictureCreateInfo PictureCreateInfo) (Picture, error)
+
+	// Get a picture's data from its ID.
+	// If the picture doesn't exist, return PictureNotFoundErr.
+	// Can also return database connection errors.
+	GetPictureFromPictureID(pictureID string) (Picture, error)
 }

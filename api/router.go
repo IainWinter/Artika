@@ -110,6 +110,41 @@ func routeWorkItemCreate(ctx *gin.Context) {
 	ctx.IndentedJSON(http.StatusOK, gin.H{})
 }
 
+// func routeWorkItemGetAll(ctx *gin.Context) {
+// 	var args struct {
+// 		SessionID string `json:"SessionID"`
+// 	}
+
+// 	err := ctx.BindJSON(&args)
+// 	if err != nil {
+// 		ctx.AbortWithStatus(http.StatusBadRequest)
+// 		return
+// 	}
+
+// 	workItems, err := user.GetAllWorkItemsForValidSessionID(args.SessionID)
+// 	if err != nil {
+// 		ctx.AbortWithStatus(http.StatusInternalServerError)
+// 		return
+// 	}
+
+// 	ctx.IndentedJSON(http.StatusOK, gin.H{
+// 		"WorkItems": workItems,
+// 	})
+// }
+
+func routePictureGet(ctx *gin.Context) {
+	pictureID := ctx.Param("pictureID")
+
+	picture, err := user.GetPicture(pictureID)
+	if err != nil {
+		ctx.AbortWithStatus(http.StatusNotFound)
+		return
+	}
+
+	ctx.Writer.Header().Set("Content-Type", "image/jpeg")
+	ctx.Writer.Write(picture.Data)
+}
+
 func AddRoutes(router *gin.Engine) {
 	router.POST("/api/session", routeSessionCreate)
 	router.DELETE("/api/session", routeSessionDelete)
@@ -119,6 +154,10 @@ func AddRoutes(router *gin.Engine) {
 	router.GET("/api/designers", routeDesignersGetAllPublic)
 
 	router.POST("/api/workItem", routeWorkItemCreate)
+	//router.GET("/api/workItem/all", routeWorkItemGetAll)
+
+	router.GET("/api/picture/:pictureID", routePictureGet)
+
 	// router.GET("/work/:workID", routeWorkGet)
 	// router.PUT("/work/:workID", routeWorkUpdate)
 }

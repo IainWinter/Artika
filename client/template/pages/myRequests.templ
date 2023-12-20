@@ -1,11 +1,32 @@
 package pages
 
 import (
+    "artika/api/data"
     "artika/client/template/components"
 )
 
-templ MyRequests() {
+templ workRequest(request data.WorkItemInfo) {
+    <div class="flex flex-col bg-white shadow-lg rounded-lg overflow-hidden">
+        <div class="px-6 py-4">
+            <div class="font-bold text-xl mb-2">{request.Title}</div>
+            <p class="text-gray-700 text-base">
+                {request.Description}
+            </p>
+
+            for _, imgid := range request.PictureIDs {
+                <img src={"/api/picture/" + imgid} alt="image" class="mt-4" />
+            }
+        </div>
+    </div>
+
+}
+
+templ MyRequests(workRequests []data.WorkItemInfo) {
     <div class="mx-auto max-w-xl">
         @components.SectionTitle("Outstanding Request")
+
+        for _, request := range workRequests {
+            @workRequest(request)
+        }
     </div>
 }

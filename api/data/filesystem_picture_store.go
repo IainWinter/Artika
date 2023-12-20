@@ -67,8 +67,8 @@ func (store *FilesystemPictureStore) StorePicture(file multipart.File, header *m
 	return filepath, nil
 }
 
-func (store *FilesystemPictureStore) GetPicture(pictureID string) (PictureFileData, error) {
-	var filepath = store.Directory + "/" + pictureID + ".jpeg"
+func (store *FilesystemPictureStore) GetPicture(pictureURI string) (PictureFileData, error) {
+	var filepath = pictureURI
 
 	data, err := os.ReadFile(filepath)
 	if err != nil {
@@ -76,7 +76,6 @@ func (store *FilesystemPictureStore) GetPicture(pictureID string) (PictureFileDa
 	}
 
 	return PictureFileData{
-		PictureID: pictureID,
-		Data:      data,
+		Data: data,
 	}, nil
 }
