@@ -190,6 +190,27 @@ func routeWorkItemCreate(ctx *gin.Context) {
 	component.Render(context.Background(), ctx.Writer)
 }
 
+func routeWorkItemDelete(ctx *gin.Context) {
+	sessionID, err := getVerifiedSessionID(ctx)
+	if err != nil {
+		ctx.Redirect(http.StatusTemporaryRedirect, "/")
+		return
+	}
+
+	workItemID := ctx.Param("workItemID")
+
+	err = user.DeleteWorkItemForValidSessionID(sessionID, workItemID)
+
+	var success = false
+
+	if err == nil {
+		success = true
+	}
+
+	var component = components.UserEnableDesignerSnippet(success) // replace
+	component.Render(context.Background(), ctx.Writer)
+}
+
 func AddRoutes(router *gin.Engine) {
 	router.Static("js", "./client/js")
 	router.Static("css", "./client/css")
@@ -205,4 +226,5 @@ func AddRoutes(router *gin.Engine) {
 	router.POST("/user/enableDesigner", routeUserDesignerEnable)
 
 	router.POST("/workItem", routeWorkItemCreate)
+	router.DELETE("/workItem/:workItemID", routeWorkItemDelete)
 }

@@ -110,6 +110,27 @@ func routeWorkItemCreate(ctx *gin.Context) {
 	ctx.IndentedJSON(http.StatusOK, gin.H{})
 }
 
+func routeWorkItemDelete(ctx *gin.Context) {
+	var args struct {
+		SessionID  string `json:"SessionID"`
+		WorkItemID string `json:"WorkItemID"`
+	}
+
+	err := ctx.BindJSON(&args)
+	if err != nil {
+		ctx.AbortWithStatus(http.StatusBadRequest)
+		return
+	}
+
+	err = user.DeleteWorkItemForValidSessionID(args.SessionID, args.WorkItemID)
+	if err != nil {
+		ctx.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+
+	ctx.IndentedJSON(http.StatusOK, gin.H{})
+}
+
 // func routeWorkItemGetAll(ctx *gin.Context) {
 // 	var args struct {
 // 		SessionID string `json:"SessionID"`
@@ -154,6 +175,7 @@ func AddRoutes(router *gin.Engine) {
 	router.GET("/api/designers", routeDesignersGetAllPublic)
 
 	router.POST("/api/workItem", routeWorkItemCreate)
+	router.DELETE("/api/workItem", routeWorkItemDelete)
 	//router.GET("/api/workItem/all", routeWorkItemGetAll)
 
 	router.GET("/api/picture/:pictureID", routePictureGet)

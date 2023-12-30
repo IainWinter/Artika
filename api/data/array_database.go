@@ -178,6 +178,27 @@ func (db *ArrayDatabaseConnection) CreateWorkItemForValidSessionID(sessionID str
 	return workItem, nil
 }
 
+func (db *ArrayDatabaseConnection) DeleteWorkItemForValidSessionID(sessionID string, workItemID string) error {
+	userInfo, err := db.GetUserForValidSessionID(sessionID)
+
+	if err != nil {
+		return err
+	}
+
+	for i, w := range db.workItems {
+		if w.WorkID == workItemID {
+			if w.CreatorUserID != userInfo.UniqueID {
+				return WorkItemNotFoundErr
+			}
+
+			db.workItems = append(db.workItems[:i], db.workItems[i+1:]...)
+			return nil
+		}
+	}
+
+	return WorkItemNotFoundErr
+}
+
 func (db *ArrayDatabaseConnection) GetAllWorkItemsForValidSessionID(sessionID string) ([]WorkItemInfo, error) {
 	userInfo, err := db.GetUserForValidSessionID(sessionID)
 

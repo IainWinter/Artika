@@ -7,6 +7,7 @@ var SessionNotFoundErr = errors.New("Session not found")
 var UserNotFoundErr = errors.New("User not found")
 var InvalidInfoErr = errors.New("Invalid info")
 var PictureNotFoundErr = errors.New("Picture not found")
+var WorkItemNotFoundErr = errors.New("Work item not found")
 
 type DatabaseConnectionInterface interface {
 	Connect(connectionString string) error
@@ -60,6 +61,12 @@ type DatabaseConnectionInterface interface {
 	// If the work item info is invalid, return InvalidInfoErr.
 	// Can also return database connection errors.
 	CreateWorkItemForValidSessionID(sessionID string, workItemCreateInfo WorkItemCreateInfo) (WorkItemInfo, error)
+
+	// Delete a work item.
+	// If the session doesn't exist, return SessionNotFoundErr.
+	// If the user doesn't exist, return UserNotFoundErr.
+	// If the work item doesn't exist, return WorkItemNotFoundErr.
+	DeleteWorkItemForValidSessionID(sessionID string, workItemID string) error
 
 	// Get all work items belonging to a user.
 	// If the session doesn't exist, return SessionNotFoundErr.

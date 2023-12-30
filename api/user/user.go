@@ -126,6 +126,15 @@ func CreateWorkItemForValidSessionID(sessionID string, workItemCreateInfo data.W
 	return workItem, nil
 }
 
+func DeleteWorkItemForValidSessionID(sessionID string, workItemID string) error {
+	err := database.DeleteWorkItemForValidSessionID(sessionID, workItemID)
+	if err != nil {
+		return FailedToCreateWorkItemErr
+	}
+
+	return nil
+}
+
 func GetAllWorkItemsForValidSessionID(sessionID string) ([]data.WorkItemInfo, error) {
 	workItems, err := database.GetAllWorkItemsForValidSessionID(sessionID)
 	if err != nil {
